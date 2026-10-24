@@ -79,3 +79,18 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
 1. Run Ghidra headless analysis on `test-install\MadMax.exe`.
 2. Map proxy DLL entry point (`XInput9_1_0.dll` or `bink2w64.dll`).
 3. Scan exe strings for debug symbols, netcode stubs, and console commands.
+
+### Reverse-engineering discoveries (from MadMaxFix and PE analysis)
+
+- Executable layout: `MadMax.exe` has ASLR disabled (relocations stripped, base fixed at `0x140000000`).
+- Denuvo runtime decryption: on Steam, the code section decrypts in memory shortly after process startup. A background thread waiting for signature match installs hooks safely without touching DRM on disk.
+- Proxy DLL seam: Game imports `XInput9_1_0.dll` with only two functions (`XInputGetState`, `XInputSetState`). A drop-in `XInput9_1_0.dll` forwards calls to `%WINDIR%\System32\XInput9_1_0.dll` and starts the co-op runtime.
+- Known engine RVAs for Steam build 2015-10-22 (`MadMax.exe`):
+  - `0x142F5C3F0`: `GetModeCount` (DXGI display mode count)
+  - `0x142F5C420`: `GetMode` (DXGI display mode getter)
+  - `0x141EA2930`: `ScrapPayout` logic
+  - `0x141EA2C00`: `GetTimeOffline` script node
+  - `0x1417F4ED0`: Global game/script manager pointer (`mgrPtr`)
+  - `0x14300B8D0`: `FindVariable` helper
+  - `0x14300A8C0`: `GetData` helper
+  - `0x14300B330`: `FirePin` helper
