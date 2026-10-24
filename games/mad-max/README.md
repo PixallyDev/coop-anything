@@ -47,7 +47,7 @@ A functional 2-player cooperative mod prototype (`madmax-coop`) has been built a
 - Implemented multi-instance support and OS-level save redirection.
 - Hooked `CVehicleManager::Update` (0x1424B7D40) to extract chassis transform (`CMatrix4f`), throttle, brake, and steering angles.
 - Hooked `CHarpoonAim::Update` (0x141F100D0) to sync Chumbucket turret aiming and firing over the network.
-- Added in-game vehicle combat HUD with companion distance card, speedometer, throttle/brake meters, and dynamic gunner aim reticle.
+- Added in-game vehicle combat HUD with companion distance card, speedometer, throttle/brake meters, and dynamic gunner aim reticle, and 3D in-world companion puppet nametags.
 - Verified live 2-player host and guest connection over UDP loopback with 20 pkt/s vehicle and player state synchronization.
 
 ## QA
@@ -77,6 +77,5 @@ QA level: `functional`.
 
 ## Next steps
 
-1. Inject and render remote player puppet models in the host's world.
-2. Expand weapon synchronization to Thunderstick launcher and sniper rifle zoom.
-3. Test public Steam P2P transport relay across distinct Steam accounts.
+1. Expand weapon synchronization to Thunderstick launcher and sniper rifle zoom.
+2. Test public Steam P2P transport relay across distinct Steam accounts.

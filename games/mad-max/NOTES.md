@@ -214,3 +214,21 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - VehicleMgr: 0x8ED578E0 [Hooked] active in world.
   - Telemetry: VehicleState synced out at 0.9 KB/s, PlayerState synced at 0.5 KB/s over UDP loopback.
   - All original Steam userdata saves 100% untouched and byte-identical.
+
+
+### In-World Character & Companion Puppet Sync Milestone (verified 2026-10-24)
+
+- **CCharacterManager Engine Hook (0x141CF5AD0)**:
+  - Dynamically resolved and hooked slot 1 (CCharacterManager::Update) of CCharacterManager (0x141251BF0).
+  - Iterates character entities managed by CCharacterManager to resolve both local player and remote companion puppet instances.
+  - Extracts local player position (posX, posY, posZ) and heading orientation (rotYaw, rotPitch) from CMatrix4f.
+  - On the receiving client, updates the remote character puppet's CMatrix4f orientation (forward vector, right vector, up vector) and translation in real time.
+- **In-World 3D Companion Puppet HUD**:
+  - Rendered 3D floating companion nameplate, distance indicator, and health bar above the remote partner's puppet model in screen space.
+- **Automated Multi-Instance Verification (test_multi_instance.py)**:
+  - Host (PID 24184) and Guest (PID 32408) launched concurrently.
+  - Both engine managers hooked and verified active:
+    - CharMgr: 0x8ED494D0 [Hooked]
+    - VehicleMgr: 0x8ED4F8E0 [Hooked]
+  - Telemetry: VehicleState streamed at 0.9 KB/s bidirectionally, PlayerState at 0.5 KB/s bidirectionally with 0.0% packet loss and 27 ms RTT.
+  - Save integrity verified: all Steam userdata saves 100% identical to baseline.
