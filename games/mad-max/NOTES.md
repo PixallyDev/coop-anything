@@ -284,3 +284,12 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - Contextual F6: When `!InWorld()` (in menus/lobby), F6 opens `MenuCommand::Lobby` (with the JOIN GAME button); when `InWorld()`, F6 opens `MenuCommand::PausePanel`.
   - Dedicated F4: Unconditionally opens `MenuCommand::Lobby`.
   - Added `PRE-GAME LOBBY` option in `PanelOptions` when `!InWorld()`, allowing players to return to the Lobby directly from the pause options by pressing Enter.
+
+### Native Menu Save Loading Workflow (v0.4.3 verified 2026-10-24)
+
+- **Clarification on Start / Join Teleportation**:
+  - In *Mad Max*, the engine does not have an external level-launch RPC or console command to force-load saves.
+  - Clicking "START" or "JOIN GAME" in the co-op lobby registers session intent and closes the lobby overlay.
+  - Players enter the world by clicking **CONTINUE** (or **LOAD GAME**) directly on Mad Max's main menu.
+  - Added on-screen banner while in menus: `"CO-OP CONNECTED! Dismiss menu (ESC) and click CONTINUE to enter world."`
+  - Added note to lobby modes: `"Load save via CONTINUE"`.
