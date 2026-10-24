@@ -381,3 +381,31 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - Created `dropzone/videos/` directory in the game root for native loose-file video overrides.
 - **Verification**:
   - Live multi-instance test confirmed clean startup, active session handshake, and 100% byte-identical save integrity against baseline hashes.
+
+### Button Detection Overhaul & Dynamic Host/Guest Role Resolution (v0.8.3 verified 2026-10-24)
+
+- **Root Causes of "None of the buttons work"**:
+  1. **Win32 `GetAsyncKeyState` Bit 0 Pitfall**:
+     - Key and hotkey checks were written as `(GetAsyncKeyState(key) & 0x8001) == 0x8001`.
+     - In NT Windows (Windows 10/11 x64), bit 0 (least significant bit) is erratic and cleared by concurrent message polling.
+     - As a result, `& 0x8001 == 0x8001` evaluated to false almost 100% of the time, dropping all keyboard and mouse inputs (`[F8]`, `[F9]`, `[F4]`, weapon select `[1-3]`, boost `[4]`, tools `[Q/E/C/B/X]`, and Left Click `[VK_LBUTTON]`).
+  2. **Premature `session.IsHost()` in `OnSessionStart`**:
+     - `OnSessionStart(session)` is dispatched by the core framework before `session.Host()` is invoked.
+     - `session.IsHost()` evaluated to `false` on BOTH host and guest at startup, erroneously assigning `selectedRole_ = 1` (Chumbucket) to the Host.
+     - Because the Host ran as Chumbucket, Host weapon fire bridge (`TriggerHostWeaponFire`) and mouse aim overrides were blocked or misrouted.
+  3. **Bink2 64-bit Header Offsets**:
+     - Bink 1.x offsets (+8/+12) were used instead of Bink 2 (64-bit) layout (+0x160 for `FrameNum` and +0x164 for `Frames`).
+- **Implementations & Architectural Fixes**:
+  - **`WasKeyJustPressed(int vKey)`**:
+    - Created reliable state-transition tracker querying `GetAsyncKeyState(vKey) & 0x8000` against previous frame states (`isDown && !wasDown`).
+    - Applied across all hotkeys (`[F4]`, `[F5]`, `[F6]`, `[F8]`, `[F9]`) and Chumbucket action keys (`[1]`, `[2]`, `[3]`, `[4]`, `[Q]`, `[E]`, `[C]`, `[B]`, `[X]`, and `[VK_LBUTTON]`).
+  - **Dynamic Host Instance Resolution (`IsHostInstance()`)**:
+    - Evaluates `MADMAXCOOP_HOST` environment variable, `core::Config::Get().GetBool("host")`, and dynamic `session_->IsHost()`.
+    - Enforces Host as Driver (Max / Role 0) and Guest as Gunner (Chumbucket / Role 1).
+  - **Host In-Game Weapon Fire Bridge (`TriggerHostWeaponFire`)**:
+    - Injects synthesized Middle Mouse Click, Key `E`, and Left Mouse Click into the Host game when Guest clicks Left Mouse Button.
+    - Synchronizes weapon selection keys (`[1]` Harpoon, `[2]` Thunderpoon, `[3]` Sniper) and Overdrive nitrous boost (`[4]` -> `VK_LSHIFT`).
+  - **Bink 2 Frame Skip**:
+    - Updated `SkipBinkVideo` to target `+0x160` and `+0x164`, enabling instant skip on `[F8]`, `[Space]`, `[Enter]`, and `[Esc]`.
+- **Verification**:
+  - Live multi-instance automated test verified host listener, guest UDP connection, and 100% byte-identical save integrity against baseline Steam save hashes.
