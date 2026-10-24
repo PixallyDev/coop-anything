@@ -321,3 +321,14 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - Dynamic arc meter around reticle: Green (<50%), Yellow (50-80% Tug-of-War), Flashing Red (>80% Snap Risk).
   - Driver Screen Prompt on Max's viewport: `TUG-OF-WAR ACTIVE: SWERVE OR DRIFT HARD TO ROLL TARGET!`
   - Joint Takedown Celebration Banner: `>>> JOINT TAKEDOWN: CHASSIS SHEARED & DESTABILIZED! <<<`
+
+### Shared Scrap & Field Scrap Welder Persistence (v0.7.0 verified 2026-10-24)
+
+- **Bidirectional Scrap Synchronization (`kMsgScrapSync = 0x100B`)**:
+  - Scrap collected by either player (from camp scavenging, crate looting, or vehicle wrecks) immediately synchronizes across both instances.
+- **Chumbucket Scrap Welder Field Repair (`Key B` / `Key X`)**:
+  - Implemented the ultimate Blackfinger perk: consuming 50 scrap directly in the wasteland repairs +25% chassis armor without needing to return to a Stronghold.
+- **Loot Magnet Auto-Salvage**:
+  - Wrecking or shearing enemy vehicles with Harpoon/Thunderpoon automatically vacuums +35 scrap directly into inventory.
+- **Scrap Notification Toasts**:
+  - Visual notification card on both screens displaying scrap gains/consumption and updated wallet balance.
