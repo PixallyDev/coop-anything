@@ -183,3 +183,11 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - Live session established: `Co-op: hosting (2 players)`, handshake passed, RTT 31 ms, loss 0.0%.
   - Bidirectional packet exchange: `PlayerState` synced at 20 pkt/s out, 20 pkt/s in.
   - Save integrity: 100% byte-identical on all original Steam userdata saves.
+
+
+### Interactive Co-op UI Hotkeys (verified 2026-10-24)
+
+- Wired `mc::GameModule::PopMenuCommand` in `module.cpp`:
+  - `F6`: Toggles interactive in-game Co-op Panel (`MenuCommand::PausePanel` / `Panel::PauseCoop`), presenting player list, ping, host controls, and interactive role selection.
+  - `F5`: Opens in-game text input dialog to Join by IP (`MenuCommand::JoinByIp` / `Panel::JoinIp`).
+  - `F7`: Toggles diagnostic status telemetry overlay.
