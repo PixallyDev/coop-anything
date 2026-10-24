@@ -10,7 +10,7 @@
 
 ## Where things stand
 
-No playable co-op or multiplayer mod exists for Mad Max today. The game was built strictly as a single-player title with closed binaries and no shipped multiplayer netcode. One community effort ([JustAddMP/MadMax](https://github.com/JustAddMP/MadMax)) has created a project repository with plans to build a co-op mod using their shared C++ `JustAddMP/core` framework, but code development has not yet started.
+No playable co-op or multiplayer mod exists for Mad Max today. The game was built strictly as a single-player title with closed binaries and no shipped multiplayer netcode. One community effort ([JustAddMP/MadMax](https://github.com/JustAddMP/MadMax)) has created a project repository with plans to build a co-op mod using their shared C++ `JustAddMP/core` framework, but code development has not yet started. Claim issue: [cranebeaker/coop-anything#180](https://github.com/cranebeaker/coop-anything/issues/180).
 
 ## Existing work
 
