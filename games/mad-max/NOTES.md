@@ -353,3 +353,20 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - Status telemetry confirms active manager hooks and `[F9] TELEPORT TO HOST` prompt.
   - Network exchange: 1.6 KB/s bidirectionally, 0.0% loss, ~33 ms RTT.
   - Save integrity: 100% byte-identical against baseline Steam save hashes.
+
+### Chumbucket Host Control Bridge & Live Entity Resolution (v0.8.1 verified 2026-10-24)
+
+- **Issue Addressed**: Guest was seeing only the aim crosshair in void coordinates `(0, 0, 0)`, and weapon fire/aim actions were not being executed on the Host's Chumbucket NPC.
+- **Dynamic Manager Entity Scanning**:
+  - `ScanForWorldEntities()` now directly scans dynamic heap allocations within `CVehicleManager` (`0x8E...`) and `CCharacterManager` (`0x8E...`) to resolve active player vehicle (`kVtblVehicle = 0x1412D8A48`) and character pointers.
+  - Corrected `FindTransformOffset` scan step to 4 bytes with length filter (`lenSq > 25.0f`) to prevent missing non-16-byte aligned translation rows or mistaking direction unit vectors for world coordinates.
+- **Chumbucket Host Control Bridge**:
+  - `TriggerHostWeaponFire(uint32_t weaponType)`: Hardware-level input injection via `SendInput` (Middle Mouse Click) and `keybd_event('E')` triggers the in-engine Harpoon / Thunderpoon / Sniper launch on Host's Magnum Opus when Guest clicks Left Mouse Button.
+  - Aim Sync: Holding Right Mouse Button on Guest holds Right Click on Host, transitioning Host's vehicle into native Harpoon Aim mode while slaving turret pitch/yaw to Guest's crosshair in `HookedHarpoonAimUpdate`.
+  - Overdrive Nitro: Key 4 on Guest taps `VK_LSHIFT` on Host to fire nitrous boost.
+- **Void Teleport Protection**:
+  - `TeleportToHost()` validates coordinate distance (`tx^2 + ty^2 + tz^2 >= 100.0f`) to prevent Guest from ever dropping into the origin void `(0, 0, 0)`.
+  - Reticle rendering in `DrawHud` is guarded with `InWorld()` so it only displays when actively in the 3D wasteland.
+- **Multi-Instance Verification**:
+  - Automated test completed exit code 0 (`TurretAim` streaming at 0.4 KB/s, valid world coordinates `z=10.3m`).
+  - All original Steam userdata saves 100% untouched and byte-identical.
