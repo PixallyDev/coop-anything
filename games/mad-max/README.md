@@ -45,10 +45,13 @@ A functional 2-player cooperative mod prototype (`madmax-coop`) has been built a
   - `src/game/module.cpp`: defined `mc::GetGameModule()` with entity transforms, pause menu role options, save redirection, and network sync handlers.
   - `build.cmd`: builds `MadMaxCoop.exe`, `madmaxcoop.dll`, and `madmaxcoop_proxy.dll`.
 - Implemented multi-instance support and OS-level save redirection.
-- Hooked `CVehicleManager::Update` (0x1424B7D40) to extract chassis transform (`CMatrix4f`), throttle, brake, and steering angles.
-- Hooked `CHarpoonAim::Update` (0x141F100D0) to sync Chumbucket turret aiming and firing over the network.
-- Added in-game vehicle combat HUD with companion distance card, speedometer, throttle/brake meters, and dynamic gunner aim reticle, and 3D in-world companion puppet nametags.
-- Verified live 2-player host and guest connection over UDP loopback with 20 pkt/s vehicle and player state synchronization.
+- Hooked CVehicleManager::Update (0x1424B7D40) to extract chassis transform (CMatrix4f), throttle, brake, and steering angles.
+- Hooked CHarpoonAim::Update (0x141F100D0) to sync Chumbucket turret aiming and weapon firing over the wire.
+- Implemented complete Chumbucket progression suite with 3 skill trees (Blackfinger, Smiter, Spotter), multi-mode controls (Mounted, Hood Repair, On-Foot), and any-car driving.
+- Removed weapon slow-motion bullet-time in vehicles via CWorldTime clamp to prevent multiplayer desync.
+- Restricted Fury mode exclusively to Max; Chumbucket uses spanner strikes and tactical support abilities.
+- Added tactical Chumbucket HUD with threat radar, gimbaled lead-indicator aim reticle, cable tension arc, wireframe vehicle diagnostic (heat, armor, tires, fuel), and toolbelt meters.
+- Verified live 2-player host and guest connection over UDP loopback with 20 pkt/s bidirectional vehicle and player state synchronization.
 
 ## QA
 

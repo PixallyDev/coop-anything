@@ -232,3 +232,32 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
     - VehicleMgr: 0x8ED4F8E0 [Hooked]
   - Telemetry: VehicleState streamed at 0.9 KB/s bidirectionally, PlayerState at 0.5 KB/s bidirectionally with 0.0% packet loss and 27 ms RTT.
   - Save integrity verified: all Steam userdata saves 100% identical to baseline.
+
+
+### Chumbucket Co-op Architecture & Progression Suite (v0.4.0 verified 2026-10-24)
+
+- **Slow-Motion Bullet-Time Removal**:
+  - Dynamically resolved CWorldTime (0x14130B068) and enforced real-time 1.0x execution speed across vehicle weapon aim, eliminating client-server desynchronization during vehicular combat.
+- **Fury Mode Restriction**:
+  - Fury mode and fury meter progression are strictly exclusive to Max. For Chumbucket, fury is suppressed to ensure distinct combat identity.
+- **Any-Vehicle Driving & Multi-Mode System**:
+  - Implemented 3 operational states for Chumbucket:
+    1. Mounted Combat (Turret / Harpoon / Thunderpoon / Shotgun / Sniper)
+    2. Hood Repair (Active mid-drive maintenance mini-game with brace checks)
+    3. On-Foot Mode (Spanner strike melee, spotter reconnaissance, unassisted car driving)
+  - Chumbucket player can drive the Magnum Opus or hotwire/drive any other vehicle in the wasteland.
+- **Three Progression Trees (Blackfinger / Smiter / Spotter)**:
+  - Blackfinger (The Sacred Solenoid): Tinkerer's Touch (+repair speed), Moving Grease-Monkey (hood repair), Praise the V8 (overdrive boost injector), Fire Suppression, Scrap Welder.
+  - Smiter (The Angel's Claws): Greased Winch (-reload time / +pull strength), Grapple Drag (tether lock), Volatile Mixture (thermite splash), Jumper Repellent (wrench strike vs boarders), Deadeye Stance (gyro stabilizer).
+  - Spotter (Eyes of the Wasteland): Convoy Target Painter (1.5x damage weakspots), Caltrops & Mine Shovel (trunk trap), Loot Magnet (auto scrap salvage), Thunder-Flash (flare blind / panic), Field Scout.
+- **Tactical Chumbucket In-Game HUD**:
+  - Threat & Compass Header: Convoy chase radar and bearing indicators.
+  - Gimbaled Lead-Indicator Aim Reticle with dynamic Cable Tension Arc (Green: stable reeling, Yellow: high drag, Flashing Red: snap risk).
+  - Magnum Opus Miniature Diagnostic Wireframe (bottom-left): real-time damage feedback for engine heat, hull armor, fuel line, and individual tires.
+  - Chum's Toolbelt & Utility Box (bottom-right): active weapon, thunderpoon count, armor scrap, extinguisher, caltrops, overdrive timer.
+  - Driver Screen Mirror Alert: WARNING: PASSENGER UNSEATED (CHUM SLIPPING) when Chum is dangling on the chassis.
+- **Multi-Instance Verification**:
+  - Host (PID 30172) and Guest (PID 34784) running simultaneously.
+  - 53.3 FPS on Host (3593 frames), 53.6 FPS on Guest (2521 frames).
+  - Bidirectional exchange: 1.8 KB/s network traffic (20 pkt/s VehicleState, 20 pkt/s PlayerState), 0.0% loss.
+  - All original Steam userdata saves 100% untouched and byte-identical.
