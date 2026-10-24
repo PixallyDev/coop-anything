@@ -114,3 +114,12 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - Real-time frame logging: `Frame 42 (17.3 FPS)`, `Frame 147 (52.5 FPS)`.
   - Game World Manager resolved dynamically from memory: `mgrPtr = 0x82254EC0`.
 - All saves verified against baseline hashes (100% match).
+
+### Dynamic singleton discovery via D3D11 render hook (verified 2026-10-24)
+
+- Integrated real-time memory scanner into `IDXGISwapChain::Present` hook (running every 2s).
+- Live execution dynamically discovered Avalanche Engine singletons as they initialize:
+  - `CSaveManager`: `ms_instance = 0x1417F4ED0` (obj `0x82258EC0`, vtable `0x1412BC380`)
+  - `COnlineManager` (`NNetwork::COnlineManager`): `ms_instance = 0x1417F4EF8` (obj `0x8256CB70`, vtable `0x141308990`)
+  - `CGameSystemManager`: `ms_instance = 0x1417F4F00` (obj `0x80EBE200`, vtable `0x14129FB60`)
+- Confirmed: singletons are grouped sequentially in the static data block (`0x1417F4Exx` - `0x1417F4Fxx`).
