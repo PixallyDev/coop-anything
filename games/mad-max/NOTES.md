@@ -332,3 +332,24 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - Wrecking or shearing enemy vehicles with Harpoon/Thunderpoon automatically vacuums +35 scrap directly into inventory.
 - **Scrap Notification Toasts**:
   - Visual notification card on both screens displaying scrap gains/consumption and updated wallet balance.
+
+
+### Guest Map Teleportation & World Matrix Sync (v0.8.0 verified 2026-10-24)
+
+- **Root Cause of Guest Map Desynchronization**:
+  - While UDP sync packets (`VehicleSyncPacket` and `PlayerSyncPacket`) were transmitting continuously, `module.cpp` only had `ReadTransform` and lacked `WriteTransform`.
+  - When Guest entered the world via `CONTINUE`, Guest remained stuck at their single-player local save coordinates (often kilometers away from Host).
+- **Implementation of Entity Transform & Matrix Writers**:
+  - `FindTransformOffset(uint64_t obj)`: Dynamically scans entity memory offsets `[0x30, 0x200]` to locate the active `CMatrix4f` translation row.
+  - `WriteTransform(uint64_t obj, float x, float y, float z)`: Writes world coordinates across duplicate simulation and visual matrix offsets and dampens residual physics velocity.
+  - `WriteVehicleMatrix(uint64_t vehicleObj, const VehicleSyncPacket& pkt)`: Fully reconstructs the 4x4 orientation matrix (up, forward, and orthogonal right vectors) and chassis position from network telemetry.
+- **Initial Auto-Teleport & Manual Teleport [F9]**:
+  - Automatic Teleportation: When Guest enters world (`InWorld() == true`) with an active co-op session, Guest automatically teleports directly to Host's coordinates and vehicle.
+  - Manual Teleport Hotkey `[F9]`: Pressing `F9` immediately re-syncs Guest's position directly to Host's vehicle or character.
+  - Gunner Role Lock: In Gunner role (Role 1 / Chumbucket), Guest's vehicle transform is continuously slaved to Host's chassis matrix in `CVehicleManager::Update`, placing Guest securely in the Magnum Opus turret.
+  - In-World Companion Puppet Sync: Companion character entities are updated in real time via `WriteTransform` in `CCharacterManager::Update`, ensuring both players see each other in 3D space.
+- **Automated Multi-Instance Verification (`test_multi_instance.py`)**:
+  - Host (PID 30916) and Guest (PID 11384) launched simultaneously side-by-side.
+  - Status telemetry confirms active manager hooks and `[F9] TELEPORT TO HOST` prompt.
+  - Network exchange: 1.6 KB/s bidirectionally, 0.0% loss, ~33 ms RTT.
+  - Save integrity: 100% byte-identical against baseline Steam save hashes.
