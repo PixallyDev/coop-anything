@@ -307,3 +307,17 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
 - **Tactical Camp Infiltration HUD**:
   - Real-time combat tracker banner: `HOSTILES IN COMBAT: X (MAX: A | CHUM: B)`.
   - Tactical weakpoint and blinded status tags rendered on-screen.
+
+### Convoy Tug-of-War & Joint Physics Takedowns (v0.6.0 verified 2026-10-24)
+
+- **Harpoon Grapple Drag & Winch Brake Lock**:
+  - Implemented real-time cable strain and tension model in `CVehicleManager::Update`.
+  - Player 2 (Chumbucket) can toggle the Winch Brake Lock (`Key E` / `RB`) while the Harpoon is attached.
+  - When locked, cable distance is fixed into a rigid tether: sharp steering angles and drifts from Max transfer lateral torque to the enemy car, causing it to fishtail and destabilize.
+- **Joint Physics Takedowns (Shear & Roll Mechanics)**:
+  - If Max initiates a sharp swerve (`|steer| > 0.45`) or side-ram at high speed (`speed > 14.0 m/s`) while the cable is under heavy strain (`tension > 65%`), the tethered component shears off and triggers multi-roll wreck physics on the target car.
+  - Broadcasted across UDP wire via `kMsgTetherSync` (0x100A).
+- **Dynamic Cable Strain HUD & Snap Warning**:
+  - Dynamic arc meter around reticle: Green (<50%), Yellow (50-80% Tug-of-War), Flashing Red (>80% Snap Risk).
+  - Driver Screen Prompt on Max's viewport: `TUG-OF-WAR ACTIVE: SWERVE OR DRIFT HARD TO ROLL TARGET!`
+  - Joint Takedown Celebration Banner: `>>> JOINT TAKEDOWN: CHASSIS SHEARED & DESTABILIZED! <<<`
