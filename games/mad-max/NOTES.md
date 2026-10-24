@@ -261,3 +261,18 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - 53.3 FPS on Host (3593 frames), 53.6 FPS on Guest (2521 frames).
   - Bidirectional exchange: 1.8 KB/s network traffic (20 pkt/s VehicleState, 20 pkt/s PlayerState), 0.0% loss.
   - All original Steam userdata saves 100% untouched and byte-identical.
+
+
+### Pre-Game Lobby & Join Game In-Progress Resolution (v0.4.1 verified 2026-10-24)
+
+- **Issue**: Clicking "JOIN GAME" resulted in notification:
+  `CO-OP: The host is playing a mode you cannot join from the lobby yet. Load the same game yourself.`
+- **Root Cause**:
+  - `core/src/dll/coop.cpp:1047` checks `ModeAvailable(mode)`.
+  - In `MadMaxModule`, `LobbyModes()`, `CurrentMode()`, and `StartMode()` were not implemented (returning empty modes and mode -1).
+  - When the Host entered the world, `coop.cpp:766` sent `SetInGame(true, -1)`. On the Guest, `ModeAvailable(-1)` failed, rejecting the lobby join action.
+- **Fix**:
+  - Registered `LobbyModes`: Mode 0 = `WASTELAND CAMPAIGN`, Mode 1 = `CONVOY BATTLE (FREE ROAM)`.
+  - Implemented `CurrentMode()` returning `0` when `InWorld() == true`.
+  - Implemented `StartMode()` returning `true` to allow seamless join-in-progress.
+  - Implemented `PlayerCharacter()` returning `MAX` or `CHUMBUCKET` based on active co-op role.
