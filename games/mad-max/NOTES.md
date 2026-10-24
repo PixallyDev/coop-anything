@@ -293,3 +293,17 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - Players enter the world by clicking **CONTINUE** (or **LOAD GAME**) directly on Mad Max's main menu.
   - Added on-screen banner while in menus: `"CO-OP CONNECTED! Dismiss menu (ESC) and click CONTINUE to enter world."`
   - Added note to lobby modes: `"Load save via CONTINUE"`.
+
+### In-World Camp Infiltration & Enemy AI Aggro Sync (v0.5.0 verified 2026-10-24)
+
+- **AI Perception & Combat Target Redirection**:
+  - Hooked `CCharacterManager::Update` (0x141251BF0) and scanned `CAiCharacterEntity` (0x14123D7E0).
+  - Dynamically evaluates distance from enemies to Max (`g_localCharPos`) and Chumbucket (`g_remoteCharPos`).
+  - When Chumbucket is closer, or when Chumbucket engages enemies with spanner strikes or Spotter Target Painter, the enemy's internal combat target pointer is dynamically redirected to Chumbucket's puppet matrix.
+  - War Boys, snipers, and camp defenders split their combat tokens and attack both players instead of solely focusing on Max.
+- **Thunder-Flash (Distraction Flare) Mechanic**:
+  - Implemented 25m radius flare blind effect. Blinds and staggers enemies for 5.0s, dropping aggro and opening enemies up for flanking takedowns.
+  - Synchronized over UDP wire via `kMsgChumAction` (actionType 5) and `kMsgEnemyAggro` (0x1008).
+- **Tactical Camp Infiltration HUD**:
+  - Real-time combat tracker banner: `HOSTILES IN COMBAT: X (MAX: A | CHUM: B)`.
+  - Tactical weakpoint and blinded status tags rendered on-screen.
