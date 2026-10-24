@@ -103,3 +103,14 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - Decryption: at 1000 ms after process launch, code pages transition to `PAGE_EXECUTE_READWRITE` (`0x40`).
   - Decrypted bytes at `0x142F5C3F0`: `48 8D 55 EF 48 89 F9 FF 50 50 8B 45 77 44 8B 5D FF...`
 - Save integrity verification: Steam userdata saves checked against baseline hashes before and after run; all 6 files byte-identical.
+
+### Direct3D 11 Present hook & Game World Manager (verified 2026-10-24)
+
+- Integrated MinHook into custom proxy `XInput9_1_0.dll`.
+- Created dummy D3D11 device and swap chain to locate `IDXGISwapChain::Present` vtable pointer (slot 8).
+- Installed in-process hook on `Present`.
+- Live test execution (PID 18840):
+  - `[D3D11] First frame rendered (Present hook active). SwapChain: 0x00000000354EF7A0`
+  - Real-time frame logging: `Frame 42 (17.3 FPS)`, `Frame 147 (52.5 FPS)`.
+  - Game World Manager resolved dynamically from memory: `mgrPtr = 0x82254EC0`.
+- All saves verified against baseline hashes (100% match).
