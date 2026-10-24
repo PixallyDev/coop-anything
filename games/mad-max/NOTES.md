@@ -370,3 +370,14 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
 - **Multi-Instance Verification**:
   - Automated test completed exit code 0 (`TurretAim` streaming at 0.4 KB/s, valid world coordinates `z=10.3m`).
   - All original Steam userdata saves 100% untouched and byte-identical.
+
+### Intro Video Skipping & Instant Menu Bypass (v0.8.2 verified 2026-10-24)
+
+- **Issue Addressed**: Players were stuck waiting through 45+ seconds of unskippable startup logos (Warner Bros, Avalanche Studios, DC, Havok, Bink) before reaching the main menu to click `CONTINUE`.
+- **Bink Engine Hook**:
+  - Hooked `BinkDoFrame` and `BinkWait` in `bink2w64.dll`.
+  - Automatically bypasses startup logos during game initialization so the game transitions directly to the main menu in seconds.
+  - Dedicated Skip Hotkey **`[F8]`**: Pressing `F8`, `Space`, `Enter`, or `Esc` at any time immediately fast-forwards/skips currently playing videos and cutscenes.
+  - Created `dropzone/videos/` directory in the game root for native loose-file video overrides.
+- **Verification**:
+  - Live multi-instance test confirmed clean startup, active session handshake, and 100% byte-identical save integrity against baseline hashes.
