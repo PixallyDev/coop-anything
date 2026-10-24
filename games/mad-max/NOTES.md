@@ -94,3 +94,12 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - `0x14300B8D0`: `FindVariable` helper
   - `0x14300A8C0`: `GetData` helper
   - `0x14300B330`: `FirePin` helper
+
+### Runtime probe test (verified 2026-10-24)
+
+- Deployed custom `XInput9_1_0.dll` proxy into `test-install` with windowed mode configuration (1280x720).
+- Test execution verified:
+  - Startup: code pages initially `PAGE_READONLY` (`0x2`) with ciphertext.
+  - Decryption: at 1000 ms after process launch, code pages transition to `PAGE_EXECUTE_READWRITE` (`0x40`).
+  - Decrypted bytes at `0x142F5C3F0`: `48 8D 55 EF 48 89 F9 FF 50 50 8B 45 77 44 8B 5D FF...`
+- Save integrity verification: Steam userdata saves checked against baseline hashes before and after run; all 6 files byte-identical.
