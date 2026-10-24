@@ -276,3 +276,11 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - Implemented `CurrentMode()` returning `0` when `InWorld() == true`.
   - Implemented `StartMode()` returning `true` to allow seamless join-in-progress.
   - Implemented `PlayerCharacter()` returning `MAX` or `CHUMBUCKET` based on active co-op role.
+
+### Lobby vs Pause Panel Hotkey Routing (v0.4.2 verified 2026-10-24)
+
+- **Issue**: Pressing F6 opened the Pause Co-op panel (`Panel::PauseCoop`), overriding the Lobby panel and hiding the "JOIN GAME" button.
+- **Fix**:
+  - Contextual F6: When `!InWorld()` (in menus/lobby), F6 opens `MenuCommand::Lobby` (with the JOIN GAME button); when `InWorld()`, F6 opens `MenuCommand::PausePanel`.
+  - Dedicated F4: Unconditionally opens `MenuCommand::Lobby`.
+  - Added `PRE-GAME LOBBY` option in `PanelOptions` when `!InWorld()`, allowing players to return to the Lobby directly from the pause options by pressing Enter.
