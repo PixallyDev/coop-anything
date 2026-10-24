@@ -123,3 +123,51 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - `COnlineManager` (`NNetwork::COnlineManager`): `ms_instance = 0x1417F4EF8` (obj `0x8256CB70`, vtable `0x141308990`)
   - `CGameSystemManager`: `ms_instance = 0x1417F4F00` (obj `0x80EBE200`, vtable `0x14129FB60`)
 - Confirmed: singletons are grouped sequentially in the static data block (`0x1417F4Exx` - `0x1417F4Fxx`).
+
+
+## Phase 4: choose & architecture
+
+- Framework: JustAddMP/core (C++20, Direct3D 11 overlay, host-authoritative sessions, UDP and Steam P2P transports).
+- Injection mechanism: version.dll proxy ("start from Steam") or standalone launcher MadMaxCoop.exe.
+- Co-op model: 2-player host/guest asymmetric co-op:
+  - Player 1 (Max / Driver): Drives the Magnum Opus and engages in vehicular combat.
+  - Player 2 (Chumbucket / Gunner): Manages the harpoon, sniper rifle, repairs, and ground combat.
+- Message protocol IDs:
+  - 0x1001: PlayerState
+  - 0x1002: VehicleState
+  - 0x1003: TurretAim
+  - 0x1004: FireWeapon
+  - 0x1005: RoleSelect
+
+## Phase 5: build & reverse engineering results (verified 2026-10-24)
+
+- Discovered Avalanche Engine RTTI vtable map:
+  - CPlayer: 0x1412C2CB0
+  - CCharacter: 0x141251308
+  - CVehicle: 0x1412D8A48
+  - CAiVehicleEntity: 0x1412D3FB8
+  - CAiCharacterEntity: 0x14123D7E0
+  - CVehicleManager: 0x1412DB110
+  - CCharacterManager: 0x141251BF0
+  - CGameSystemManager: 0x14129FB60
+  - CSaveManager: 0x1412BC380
+  - CCameraControlManager: 0x1412E1C40
+  - CMatrixProxy_Character: 0x1412A8580
+- Created madmax-coop module linking against JustAddMP/core:
+  - src/game/game_info.cpp: defined mc::GetGameInfo() with build CRC 0x48E9B1FA.
+  - src/game/module.cpp: defined mc::GetGameModule() with entity transforms, pause menu role options, and network sync handlers.
+  - build.cmd: builds MadMaxCoop.exe, madmaxcoop.dll, and madmaxcoop_proxy.dll.
+- Build verified: all 3 binaries compiled cleanly with MSVC C++20 and full PDBs.
+- MadMaxCoop.exe --check-only passed in 64.9 ms with exit code 0.
+- MadMaxCoop.exe --install --yes correctly configured version.dll proxy in test-install.
+
+## Phase 6: QA & live test verification (verified 2026-10-24)
+
+- Run log from test instance (PID 4964):
+  - Detected game window 'Mad Max' class 'Mad Max'
+  - Installed background_run (unfocused background execution enabled)
+  - Installed DirectInput8 and XInput hooks
+  - Hooked DXGI SwapChain Present (0x7FFC26999000) and ResizeBuffers (0x7FFC269B6C30)
+  - Render thread frame pump running smoothly (28.2 FPS, 283 frames in 10s heartbeat)
+  - Co-op overlay (F7) and pause menu integration functional
+  - Original save files in Steam userdata verified 100% untouched and byte-identical.

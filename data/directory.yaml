@@ -1372,9 +1372,9 @@
   open_source: unknown
   last_activity: unknown
   qa: none
-  notes: No working co-op or multiplayer mod found. JustAddMP/MadMax is a placeholder repo ("planned", README only, 2026-10-17).
-    Same-engine JC3-MP by nanos is closed source. Research, isolation, test copy, and Ghidra setup for Steam build 1398848
-    are in games/mad-max; claim issue cranebeaker/coop-anything#180.
+  notes: Working prototype runtime (madmax-coop) built on JustAddMP/core. Injects via version.dll proxy or MadMaxCoop.exe,
+    hooks D3D11 Present, provides in-engine F7 overlay, subclasses window for background run, and resolves entity vtables.
+    Tested on Steam build 1398848; claim issue cranebeaker/coop-anything#180.
   sources:
   - https://github.com/JustAddMP/MadMax
   - https://github.com/JustAddMP/core
