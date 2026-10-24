@@ -409,3 +409,34 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
     - Updated `SkipBinkVideo` to target `+0x160` and `+0x164`, enabling instant skip on `[F8]`, `[Space]`, `[Enter]`, and `[Esc]`.
 - **Verification**:
   - Live multi-instance automated test verified host listener, guest UDP connection, and 100% byte-identical save integrity against baseline Steam save hashes.
+
+### Parallel Co-Op Architecture: Max & Chumbucket System (v0.9.0 verified 2026-10-24)
+
+- **1. Core Architecture & Player Ownership**:
+  - **Player 1 (Max - Host)**: Retains standard vehicle driving, shotgun/brawling mechanics, and classic Fury Mode (`Role: Max (Driver / Melee)`).
+  - **Player 2 (Chumbucket - Client)**:
+    - Independent pawn instance (`kVtblCharacter = 0x141251308` with `kVtblMatrixProxy_Char = 0x1412A8580`).
+    - Four operational modes via `Key C`:
+      1. `MountedTurret`: Position locked to Magnum Opus rear gunner bed, slaved to host driving matrix.
+      2. `HoodRepair`: Mid-drive engine maintenance on Magnum Opus hood.
+      3. `OnFoot`: Free wasteland brawler wielding heavy oversized pipe wrench, scrap blunderbuss, and caltrops.
+      4. `VehiclePilot`: Independent vehicle piloting (driving own Magnum Opus or hijacking Wasteland cars like Scrotus Buggies, Die Rolla, Crusher via `Key H`).
+- **2. Universal Rule: 100% Real-Time Aiming (Zero Slow-Motion)**:
+  - Implemented `StripAimingTimeDilation(uint64_t worldTimeObj)` scanning `CWorldTime` (0x14130B068) offsets `[0x18, 0x80]`.
+  - Continuously overrides engine time dilation to `1.0f` during Shotgun, Harpoon, Thunderpoon, and Sniper aiming for BOTH Max and Chumbucket.
+  - Eliminates network desync and preserves multiplayer fairness.
+- **3. Parallel Gear & Skill Suite**:
+  - Equal gear capacity: 8 Shotgun shells, 6 Thunderpoons, 4 Canteen sips, 3 Caltrop bundles, 500 Scrap reserves.
+  - Dedicated Chumbucket skill progression tree.
+- **4. "Blackfinger Zeal" Combat System (Fury Replacement)**:
+  - Fills a 0-100% Zeal Meter via wrench parries (+25%), scrap scavenging (+15%), and projectile hits (+10%).
+  - Activation (`Key Z` or `Key 4` on foot):
+    - 15.0s active state with 150% Frenzied Spanner Flurry attack rate.
+    - Shrapnel Pocket Sand blasts nearby War Boys within 16m with 4.5s blind/stagger.
+    - Martyr's Spark triggers concussive shockwave knockback on incoming heavy strikes.
+    - Fanatical devotion lines ("Praise the Holy Spark! Burn the unholy flesh!") broadcast over wire via `kMsgChumZeal` (0x100C).
+- **5. Complete Chumbucket Weapon Upgrades**:
+  - Harpoon: Tier 1 Greased Winch, Tier 2 Barbed Anchor (hull bleed), Tier 3 Ground Anchor (handbrake pivot turns), Tier 4 Kinetic Snap (collateral whiplash).
+  - Thunderpoon: Tier 1 Impact Fuse, Tier 2 Thermite Cluster, Tier 3 Dual Quickloader, Tier 4 Bunker Buster (armor bypass).
+  - Scrap Blunderbuss: Wide shrapnel spread with incendiary ignition and heavy War Boy stagger.
+  - Defense: Heavy Spanner Hook, Counter-Disarm, Caltrop Drop (`Key Q`), and Hunchback Roll (`Key Space` for 0.75s I-frames).
