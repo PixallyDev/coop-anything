@@ -191,3 +191,26 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - `F6`: Toggles interactive in-game Co-op Panel (`MenuCommand::PausePanel` / `Panel::PauseCoop`), presenting player list, ping, host controls, and interactive role selection.
   - `F5`: Opens in-game text input dialog to Join by IP (`MenuCommand::JoinByIp` / `Panel::JoinIp`).
   - `F7`: Toggles diagnostic status telemetry overlay.
+
+
+### Vehicle & Weapon Sync Milestone (verified 2026-10-24)
+
+- **CVehicleManager Engine Hook (0x1424B7D40)**:
+  - Dynamically resolved and hooked slot 1 (CVehicleManager::Update) of CVehicleManager (0x1412DB110).
+  - Iterates managed vehicle entities in real time to locate the player's active Magnum Opus (CVehicle*).
+  - Discovered chassis CMatrix4f transform matrix at entity offset 0x30-0x70.
+  - Extracts chassis translation (posX, posY, posZ), forward vector (forwardX, forwardY, forwardZ), up vector (upX, upY, upZ), driving speed (km/h), steering angle (-1.0 to 1.0), throttle (0.0 to 1.0), and brake (0.0 to 1.0).
+  - On Guest client, applies received VehicleSyncPacket matrix coordinates back into the vehicle instance to keep chassis orientation synchronized with Host.
+- **Harpoon / Turret Rotation & Weapon Firing Hook (0x141F100D0)**:
+  - Hooked slot 0 (CHarpoonAim::Update) of CStateContainerStateHarpoonAim (0x14127FEE8).
+  - Overrides in-engine harpoon aim pitch and yaw with incoming TurretAimPacket streamed by Player 2 (Gunner role).
+  - Triggers weapon launch transition (0x14127B548) upon receipt of reliable WeaponFirePacket.
+- **In-Game Vehicle Combat HUD**:
+  - Rendered in-world Companion card with distance, vehicle speed, and live throttle/brake meters.
+  - Added dynamic Gunner Aim Reticle with target tracking brackets centered on aiming angles.
+- **Automated Multi-Instance Verification (test_multi_instance.py)**:
+  - Host (PID 33380) and Guest (PID 28148) launched concurrently.
+  - Both hooks installed successfully: CVehicleManager_Update at 0x1424B7D40, CHarpoonAim_Update at 0x141F100D0.
+  - VehicleMgr: 0x8ED578E0 [Hooked] active in world.
+  - Telemetry: VehicleState synced out at 0.9 KB/s, PlayerState synced at 0.5 KB/s over UDP loopback.
+  - All original Steam userdata saves 100% untouched and byte-identical.

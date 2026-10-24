@@ -45,7 +45,10 @@ A functional 2-player cooperative mod prototype (`madmax-coop`) has been built a
   - `src/game/module.cpp`: defined `mc::GetGameModule()` with entity transforms, pause menu role options, save redirection, and network sync handlers.
   - `build.cmd`: builds `MadMaxCoop.exe`, `madmaxcoop.dll`, and `madmaxcoop_proxy.dll`.
 - Implemented multi-instance support and OS-level save redirection.
-- Verified live 2-player host and guest connection over UDP loopback.
+- Hooked `CVehicleManager::Update` (0x1424B7D40) to extract chassis transform (`CMatrix4f`), throttle, brake, and steering angles.
+- Hooked `CHarpoonAim::Update` (0x141F100D0) to sync Chumbucket turret aiming and firing over the network.
+- Added in-game vehicle combat HUD with companion distance card, speedometer, throttle/brake meters, and dynamic gunner aim reticle.
+- Verified live 2-player host and guest connection over UDP loopback with 20 pkt/s vehicle and player state synchronization.
 
 ## QA
 
@@ -75,5 +78,5 @@ QA level: `functional`.
 ## Next steps
 
 1. Inject and render remote player puppet models in the host's world.
-2. Synchronize vehicle chassis orientation, throttle, and steering angles over wire.
-3. Synchronize Chumbucket's harpoon and turret aim angles between host and guest.
+2. Expand weapon synchronization to Thunderstick launcher and sniper rifle zoom.
+3. Test public Steam P2P transport relay across distinct Steam accounts.
