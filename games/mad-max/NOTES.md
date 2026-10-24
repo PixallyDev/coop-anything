@@ -171,3 +171,15 @@ Searched across GitHub, Nexus Mods, ModDB, Reddit, Steam Community, YouTube, Rus
   - Render thread frame pump running smoothly (28.2 FPS, 283 frames in 10s heartbeat)
   - Co-op overlay (F7) and pause menu integration functional
   - Original save files in Steam userdata verified 100% untouched and byte-identical.
+
+
+### Multi-instance host and guest test (verified 2026-10-24)
+
+- Addressed single-instance restriction via `CreateMutexA` process-ID scoping in `module.cpp`.
+- Added OS-level save file redirection in `module.cpp` (`CreateFileW`/`CreateFileA` intercepting `234140\remote` to `test-install\remote`).
+- Automated side-by-side execution (`test_multi_instance.py`):
+  - Host (`PID 12372`): window placed on left half (`0,0 960x1020`), hosting on UDP port 27960, rendered at 53.8 FPS (2525 frames).
+  - Guest (`PID 10828`): window placed on right half, connected to `127.0.0.1:27960`, rendered at 54.5 FPS (1992 frames).
+  - Live session established: `Co-op: hosting (2 players)`, handshake passed, RTT 31 ms, loss 0.0%.
+  - Bidirectional packet exchange: `PlayerState` synced at 20 pkt/s out, 20 pkt/s in.
+  - Save integrity: 100% byte-identical on all original Steam userdata saves.
